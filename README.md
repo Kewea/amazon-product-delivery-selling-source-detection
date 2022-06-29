@@ -19,12 +19,11 @@ python3 -V
 ```
 
 ## Installation & Usage
-1. Git Clone the project to any directory of your computer
-    ```bash
-    git clone 
-    ```
+1. Git clone/fork the project to any directory of your computer
+2. Choose either Beauty soup or selenium version
 
-2. Data Preparation
+### Beauty soup version
+1. Data Preparation
    1. Open dev tool (F12 for Chrome) and select `Network` tab
    2. Access the product page on Amazon 
    3. Click on section for listing out all available prices and sellers
@@ -33,7 +32,7 @@ python3 -V
     https://www.amazon.co.jp/gp/product/ajax/ref=...
    ```
 
-3. Rename `example_products.json` to `products.json` and write down product details into `products.json`
+2. Rename `example_products.json` to `products.json` and write down product details into `products.json`
     ```json
    {
       "products": [
@@ -45,7 +44,7 @@ python3 -V
       ]
     }  
     ```
-4. Setup cron job
+3. Setup cron job
    1. Open terminal
    2. Type `crontab -e` and then `i`
    3. Put down execution command
@@ -57,5 +56,6 @@ python3 -V
    
 
 # Disclaimer
-This script is for recreational purpose only. Any illegal usage including transforming the script 
-into any means for automatic ordering purpose by modifying the source code is prohibited. 
+This script is for recreational purpose only. Any illegal usage including transforming the script into any means 
+for automatic ordering purpose by modifying the source code is prohibited. All rights reserved by the author of 
+this script.
