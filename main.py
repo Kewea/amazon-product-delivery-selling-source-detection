@@ -16,19 +16,13 @@ def source_detection():
     product_list = json.load(file)
 
     for existing_product_info in product_list["products"]:
-        response = requests.get(existing_product_info["link"])
-        if response.status_code >= 400:
-            response.close()
-            continue
-
-        html_text = response.text
-        response.close()
-        soup = BeautifulSoup(html_text, "html.parser")
-        new_product_info = crawl_dom(soup)
-        if not new_product_info:
-            updated_product_info = existing_product_info
-        else:
-            updated_product_info = compare_product_info(existing_product_info, new_product_info.values())
+        updated_product_info = existing_product_info
+        with requests.session() as request:
+            response = request.get(existing_product_info["link"])
+            if response.ok:
+                soup = BeautifulSoup(response.text, "html.parser")
+                new_product_info = crawl_dom(soup)
+                updated_product_info = compare_product_info(existing_product_info, new_product_info.values())
 
         updated_products.append(updated_product_info)
 
