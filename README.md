@@ -38,12 +38,9 @@ python3 -V
    {
       "products": [
         {
-          "name": "gundam",
-          "link": "https://www.amazon.co.jp/gp/product/ajax/ref=auto_load_aod?asin=B09NKQMDXQ&pc=dp&experienceId=aodAjaxMain",
-          "expected_price": 5500,
-          "ship_from": "買取王子 本店",
-          "sold_by": "買取王子 本店",
-          "actual_price": 5433
+          "name": "any name you want",
+          "link": "URL found in step 2",
+          "expected_price": 1000
         },...
       ]
     }  

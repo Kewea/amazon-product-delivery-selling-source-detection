@@ -1,0 +1,9 @@
+{
+  "products": [
+    {
+      "name": "any name you want",
+      "link": "URL found in step 2",
+      "expected_price": 1000,
+    }
+  ]
+}
