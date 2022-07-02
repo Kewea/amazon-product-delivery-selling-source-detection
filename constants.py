@@ -1,0 +1,7 @@
+TEST = "tests"
+PROD = "prod"
+DATA = "data"
+BEAUTIFULSOUP = "beautifulsoup"
+SELENIUM = "selenium"
+CSV = "csv"
+JSON = "json"

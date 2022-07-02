@@ -166,4 +166,4 @@ cython_debug/
 *.vsix
 
 # Any data file
-products.json
+data/products.json

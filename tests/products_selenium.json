@@ -1,0 +1,20 @@
+{
+  "products": [
+    {
+      "name": "keyboard1",
+      "link": "https://www.amazon.co.jp/%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BD%E3%83%95%E3%83%88Bluetooth%E3%83%87%E3%82%B9%E3%82%AF%E3%83%88%E3%83%83%E3%83%97-%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89-%E3%83%9E%E3%82%A6%E3%82%B9%E3%82%BB%E3%83%83%E3%83%88-Bluetooth-%E3%83%AF%E3%82%A4%E3%83%A4%E3%83%AC%E3%82%B9%EF%BC%88%E3%83%96%E3%83%A9%E3%83%83%E3%82%AF%EF%BC%89-QHG-00019/dp/B088CHJJCJ/?_encoding=UTF8&pd_rd_w=pQCG4&content-id=amzn1.sym.09fc5329-add5-4943-82f6-96f98cfdada8&pf_rd_p=09fc5329-add5-4943-82f6-96f98cfdada8&pf_rd_r=TND54AEHKRVCDVAHRSWS&pd_rd_wg=lW7Yk&pd_rd_r=3f20fa69-6b23-45be-ae41-234f92c81e77&ref_=pd_gw_ci_mcx_mr_hp_atf_m",
+      "expected_price": 10000,
+      "ship_from": "Amazon.co.jp",
+      "sold_by": "Amazon.co.jp",
+      "actual_price": 7065
+    },
+    {
+      "name": "keyboard2",
+      "link": "https://www.amazon.co.jp/%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BD%E3%83%95%E3%83%88-QSZ-00019-%E3%80%902020%E5%B9%B4%E6%9C%80%E6%96%B0%E7%89%88%E3%80%91%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%82%BD%E3%83%95%E3%83%88Bluetooth-%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89-%E3%83%96%E3%83%A9%E3%83%83%E3%82%AF/dp/B083P1JNB2/ref=pd_day0fbt_img_sccl_2/355-9869444-1827763?pd_rd_w=fbBRb&content-id=amzn1.sym.97937b68-8585-4eae-a2c4-35f3e78fd21c&pf_rd_p=97937b68-8585-4eae-a2c4-35f3e78fd21c&pf_rd_r=KY90VAYB5REA96YWEMKF&pd_rd_wg=ZqPh8&pd_rd_r=9deb51c2-d846-40f0-93e8-e8010d3c143f&pd_rd_i=B083P1JNB2&psc=1",
+      "expected_price": 10000,
+      "ship_from": "Amazon.co.jp",
+      "sold_by": "Amazon.co.jp",
+      "actual_price": 8451
+    }
+  ]
+}

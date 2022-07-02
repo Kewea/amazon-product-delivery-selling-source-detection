@@ -20,7 +20,19 @@ python3 -V
 
 ## Installation & Usage
 1. Git clone/fork the project to any directory of your computer
-2. Choose either Beauty soup or selenium version
+2. Choose either Beautiful soup or Selenium version
+
+### Difference between Beauty soup and Selenium version
+|                 | Beautiful soup          | Selenium            |
+|-----------------|-------------------------|---------------------|
+| Execution speed | faster                  | slower              |
+| Stability       | sometimes fail          | steady              |
+| Product's URL   | from browser's dev tool | Amazon product page |
+
+
+### Selenium version
+1. Data Preparation
+   1. Copy the URL of the product
 
 ### Beauty soup version
 1. Data Preparation
@@ -32,28 +44,34 @@ python3 -V
     https://www.amazon.co.jp/gp/product/ajax/ref=...
    ```
 
-2. Rename `example_products.json` to `products.json` and write down product details into `products.json`
+### Application Setup
+1. Rename `example_products.json` to `products.json` and write down product details into `products.json`
     ```json
    {
       "products": [
         {
           "name": "any name you want",
-          "link": "URL found in step 2",
+          "link": "URL found in above steps",
           "expected_price": 1000
-        },...
+        }
       ]
     }  
     ```
-3. Setup cron job
+2. Setup cron job
    1. Open terminal
    2. Type `crontab -e` and then `i`
    3. Put down execution command
    ```bash
    # Date time can be changed
-   */1 * * * * cd {directory having source code}; source .venv/bin/activate && python main.py; deactivate;
+   */1 * * * * cd {directory having source code}; source .venv/bin/activate && python main.py -e prod; deactivate;
    ```
    4. Click `Esc`, type `:wq`
    
+### Command Arguments
+1. `-e` or `--environment`
+   - Affect the data file being used. `prod` is used by default
+2. `-c` or `--crawl-approach`
+   - Approach being used for crawling. `selenium` is used by default
 
 # Disclaimer
 This script is for recreational purpose only. Any illegal usage including transforming the script into any means 
