@@ -2,18 +2,18 @@ import argparse
 import logging
 import sys
 import constants
+import os
 from pathlib import Path
-from beautiful_soup_crawler import BeautifulSoupCrawler
-from selenium_crawler import SeleniumCrawler
-
 
 logging.basicConfig(level=logging.ERROR,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     encoding='utf-8',
                     filename="app.log")
 logger = logging.getLogger(__name__)
+os.environ['WDM_LOG'] = "0"
 
 if __name__ == '__main__':
+    import crawlers
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', '--environment', type=str, default=constants.PROD, choices=[constants.PROD, constants.TEST],
                         help="Select environment")
@@ -35,6 +35,6 @@ if __name__ == '__main__':
         sys.exit()
 
     if args.crawl_approach.lower() == constants.SELENIUM:
-        SeleniumCrawler(file_path).data_scraping()
+        crawlers.SeleniumCrawler(file_path).data_scraping()
     else:
-        BeautifulSoupCrawler(file_path).data_scraping()
+        crawlers.BeautifulSoupCrawler(file_path).data_scraping()
