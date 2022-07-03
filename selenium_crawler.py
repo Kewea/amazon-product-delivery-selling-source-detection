@@ -1,8 +1,4 @@
-import datetime
 import json
-import re
-import notitfication
-from decimal import Decimal
 from pathlib import Path
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -56,5 +52,5 @@ class SeleniumCrawler(BaseCrawler):
                 'sold_by': sold_by.get_attribute("innerHTML").strip(),
                 'price': price.get_attribute("innerHTML").strip()
             }
-        # print(product_info)
+
         return product_info

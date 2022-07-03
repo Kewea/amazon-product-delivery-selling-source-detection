@@ -68,10 +68,8 @@ python3 -V
    4. Click `Esc`, type `:wq`
    
 ### Command Arguments
-1. `-e` or `--environment`
-   - Affect the data file being used. `prod` is used by default
-2. `-c` or `--crawl-approach`
-   - Approach being used for crawling. `selenium` is used by default
+1. `-c` or `--crawl-approach`
+   - Approach being used for crawling. User can choose between `selenium` and `beautifulsoup`. `selenium` is used by default
 
 # Disclaimer
 This script is for recreational purpose only. Any illegal usage including transforming the script into any means 

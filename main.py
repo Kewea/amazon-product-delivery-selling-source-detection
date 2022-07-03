@@ -7,7 +7,10 @@ from beautiful_soup_crawler import BeautifulSoupCrawler
 from selenium_crawler import SeleniumCrawler
 
 
-logging.basicConfig(filename="application.log")
+logging.basicConfig(level=logging.ERROR,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    encoding='utf-8',
+                    filename="app.log")
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':

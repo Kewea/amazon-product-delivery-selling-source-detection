@@ -1,7 +1,6 @@
 import logging
+import os
 import sys
-
-import constants
 import datetime
 import json
 import re
@@ -10,6 +9,7 @@ from decimal import Decimal
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
+os.environ['WDM_LOG'] = '0'
 
 
 class BaseCrawler:
@@ -34,9 +34,10 @@ class BaseCrawler:
         for index, item in enumerate(options):
             # print(f'{product["name"]}. {item["ship_from"]} - {item["sold_by"]} : {item["price"]}')
             actual_price = int(Decimal(re.sub(r'[^\d.]', '', item["price"])))
+            amazon = re.compile(r"^Amazon.*")
 
             # Delivery and selling source are both Amazon
-            if item["ship_from"] == 'Amazon' and item["sold_by"] == 'Amazon':
+            if re.match(amazon, item["ship_from"]) and re.match(amazon, item["sold_by"]):
                 info = self.update_product_info(existing_info, "Amazon", "Amazon", actual_price)
                 return info
 
