@@ -19,6 +19,8 @@ if __name__ == '__main__':
                         help="Select environment")
     parser.add_argument('-c', '--crawl-approach', type=str, default=constants.SELENIUM,
                         choices=[constants.SELENIUM, constants.BEAUTIFULSOUP], help="Select crawling approach")
+    parser.add_argument('-m', '--mode', type=int, default=0,
+                        choices=[0, 1], help="Choose filtering options")
     # parser.add_argument('-d', '--data-format', type=str, default=constants.JSON,
     #                     choices=[constants.JSON, constants.CSV], help="Select data file type")
     args = parser.parse_args()
@@ -35,6 +37,6 @@ if __name__ == '__main__':
         sys.exit()
 
     if args.crawl_approach.lower() == constants.SELENIUM:
-        crawlers.SeleniumCrawler(file_path).data_scraping()
+        crawlers.SeleniumCrawler(file_path, args.mode).data_scraping()
     else:
-        crawlers.BeautifulSoupCrawler(file_path).data_scraping()
+        crawlers.BeautifulSoupCrawler(file_path, args.mode).data_scraping()

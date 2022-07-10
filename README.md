@@ -70,6 +70,10 @@ python3 -V
 ### Command Arguments
 1. `-c` or `--crawl-approach`
    - Approach being used for crawling. User can choose between `selenium` and `beautifulsoup`. `selenium` is used by default
+2. `-m' or `--mode`
+   - Decide what kind of shop should be chosen
+     - 0: Item price is the lowest
+     - 1: Item price is lower than expectation
 
 # Disclaimer
 This script is for recreational purpose only. Any illegal usage including transforming the script into any means 

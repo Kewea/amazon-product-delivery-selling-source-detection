@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseCrawler:
-    def __init__(self, file_path: Path):
+    def __init__(self, file_path: Path, mode: int):
         with open(file_path, "r") as f:
             try:
                 self.product_list = json.load(f)
@@ -27,6 +27,7 @@ class BaseCrawler:
                 sys.exit()
 
         self.file_path = file_path
+        self.mode = mode
 
     def compare_product_info(self, existing_info: dict, options) -> dict:
         """
@@ -36,48 +37,65 @@ class BaseCrawler:
         :param options:
         :return:
         """
+        optimal_choice = {}
+
         for index, item in enumerate(options):
-            # print(f'{product["name"]}. {item["ship_from"]} - {item["sold_by"]} : {item["price"]}')
-            actual_price = int(Decimal(re.sub(r'[^\d.]', '', item["price"])))
+            # print(f'{existing_info["name"]}. {item["ship_from"]} - {item["sold_by"]} : {item["price"]} + {item["delivery_fee"]}')
+            delivery_fee = re.sub(r'[^\d.]', '', item["delivery_fee"])
+            delivery_fee = 0 if not delivery_fee else int(Decimal(delivery_fee))
+
+            actual_price = re.sub(r'[^\d.]', '', item["price"])
+            actual_price = 0 if not actual_price else int(Decimal(actual_price)) + delivery_fee
+
+            if not actual_price:
+                continue
+
             amazon = re.compile(r"^Amazon.*")
+            item.update({"id": index, "actual_price": actual_price})
 
             # Delivery and selling source are both Amazon
             if re.match(amazon, item["ship_from"]) and re.match(amazon, item["sold_by"]):
-                info = self.update_product_info(existing_info, "Amazon", "Amazon", actual_price)
+                info = self.update_product_info(existing_info, item)
                 return info
 
-            # Shop with the lowest price
-            if actual_price <= int(existing_info["expected_price"]):
-                info = self.update_product_info(existing_info, item["ship_from"], item["sold_by"], actual_price)
-                return info
+            # Lowest price
+            if (self.mode == 0) and (not optimal_choice or actual_price < optimal_choice["actual_price"]):
+                optimal_choice = item
+
+            # Price lower than expectation
+            if (self.mode == 1) and (not optimal_choice and actual_price <= int(existing_info["expected_price"])):
+                optimal_choice = item
+
+        if optimal_choice:
+            return self.update_product_info(existing_info, optimal_choice)
+            # return info
 
         return existing_info
 
-    def update_product_info(self, product: dict, ship_from: str = "", sold_by: str = "", actual_price: int = 0) -> dict:
+    def update_product_info(self, existing_info: dict, new_info: dict) -> dict:
         """
         Check if the product has been recorded or not
 
-        :param product:
-        :param ship_from:
-        :param sold_by:
-        :param actual_price:
+        :param existing_info:
+        :param new_info:
         :return:
         """
-        if ("ship_from" not in product or product["ship_from"] != ship_from) or (
-                "sold_by" not in product or product["sold_by"] != sold_by):
+        if ("ship_from" not in existing_info or existing_info["ship_from"] != new_info["ship_from"]) or \
+                ("sold_by" not in existing_info or existing_info["sold_by"] != new_info["sold_by"]) or \
+                ("actual_price" not in existing_info or existing_info["actual_price"] != new_info["actual_price"]):
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-            notitfication.send_mac_notification(product["name"],
-                                                f'{now}: shipped by {ship_from} from {sold_by} with actual price {actual_price}')
-            product.update({"ship_from": ship_from, "sold_by": sold_by, "actual_price": actual_price})
-        return product
+            notitfication.send_mac_notification(existing_info["name"],
+                                                f'{now}: shipped by {new_info["ship_from"]} from {new_info["sold_by"]} with actual price {new_info["actual_price"]}')
+            existing_info.update({"ship_from": new_info["ship_from"], "sold_by": new_info["sold_by"], "actual_price": new_info["actual_price"]})
+        return existing_info
 
 
 class BeautifulSoupCrawler(BaseCrawler):
-    def __init__(self, file_path: Path):
-        super().__init__(file_path)
+    def __init__(self, file_path: Path, mode: int):
+        super().__init__(file_path, mode)
 
     def data_scraping(self):
-        updated_products = list()
+        updated_products = []
 
         for existing_product_info in self.product_list["products"]:
             updated_product_info = existing_product_info
@@ -108,18 +126,19 @@ class BeautifulSoupCrawler(BaseCrawler):
             ship_from = ship_from_html.find('span', class_='a-size-small a-color-base').text.strip()
             sold_by = sold_by_html.find('a', class_='a-size-small a-link-normal').text.strip()
             price = price_html.find('span', class_='a-offscreen').text.strip()
+            # TODO delivery_fee
             product_info[index] = {'ship_from': ship_from, 'sold_by': sold_by, 'price': price}
 
         return product_info
 
 
 class SeleniumCrawler(BaseCrawler):
-    def __init__(self, file_path: Path):
-        super().__init__(file_path)
+    def __init__(self, file_path: Path, mode: int):
+        super().__init__(file_path, mode)
         self.driver = self.create_driver_instance()
 
     def data_scraping(self):
-        updated_products = list()
+        updated_products = []
 
         for existing_product_info in self.product_list["products"]:
             # Access Amazon product link
@@ -149,14 +168,16 @@ class SeleniumCrawler(BaseCrawler):
         product_info = {}
 
         # Get shipping source
-        for index, (ship_from, sold_by, price) in enumerate(zip(
+        for index, (ship_from, sold_by, price, delivery_fee) in enumerate(zip(
                 driver.find_elements(By.XPATH, "//div[@id='aod-offer-shipsFrom']/div/div/div[2]/span"),
                 driver.find_elements(By.XPATH, "//div[@id='aod-offer-soldBy']/div/div/div[2]/a"),
-                driver.find_elements(By.XPATH, "//div[contains(@id, 'aod-price')]/span/span[1]"))):
+                driver.find_elements(By.XPATH, "//div[contains(@id, 'aod-price')]/span/span[1]"),
+                driver.find_elements(By.XPATH, "//div[contains(@id, 'mir-layout-DELIVERY_BLOCK-slot-PRIMARY_DELIVERY_MESSAGE_LARGE')]/span"))):
             product_info[index] = {
                 'ship_from': ship_from.get_attribute("innerHTML").strip(),
                 'sold_by': sold_by.get_attribute("innerHTML").strip(),
-                'price': price.get_attribute("innerHTML").strip()
+                'price': price.get_attribute("innerHTML").strip(),
+                'delivery_fee': delivery_fee.get_attribute("data-csa-c-delivery-price")
             }
 
         return product_info
