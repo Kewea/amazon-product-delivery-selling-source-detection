@@ -26,26 +26,15 @@ python3 -V
 |                 | Beautiful soup          | Selenium            |
 |-----------------|-------------------------|---------------------|
 | Execution speed | faster                  | slower              |
-| Stability       | sometimes fail          | steady              |
+| Stability       | relatively stead        | steady              |
 | Product's URL   | from browser's dev tool | Amazon product page |
 
 
-### Selenium version
-1. Data Preparation
-   1. Copy the URL of the product
-
-### Beauty soup version
-1. Data Preparation
-   1. Open dev tool (F12 for Chrome) and select `Network` tab
-   2. Access the product page on Amazon 
-   3. Click on section for listing out all available prices and sellers
-   4. Look for request with type xhr which has `.../gp/product/ajax/ref...` in the URL
-   ```bash
-    https://www.amazon.co.jp/gp/product/ajax/ref=...
-   ```
-
 ### Application Setup
-1. Rename `example_products.json` to `products.json` and write down product details into `products.json`
+1. Data Preparation
+   1. Copy the URL of the product 
+
+2. Rename `example_products.json` to `products.json` and write down product details into `products.json`
     ```json
    {
       "products": [
@@ -57,7 +46,7 @@ python3 -V
       ]
     }  
     ```
-2. Setup cron job
+3. Setup cron job
    1. Open terminal
    2. Type `crontab -e` and then `i`
    3. Put down execution command
@@ -70,8 +59,10 @@ python3 -V
 ### Command Arguments
 1. `-c` or `--crawl-approach`
    - Approach being used for crawling. User can choose between `selenium` and `beautifulsoup`. `selenium` is used by default
+     - selenium
+     - beautifulsoup
 2. `-m` or `--mode`
-   - Decide what kind of shop should be chosen
+   - Decide what kind of shop should be chosen. Currently, option is mutually exclusive.
      - 0: Item price is the lowest
      - 1: Item price is lower than expectation
 

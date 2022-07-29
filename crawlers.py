@@ -14,6 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import NoSuchElementException, TimeoutException
 from seleniumwire import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+from config import AMAZON_PRODUCT_PRICE_URL
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,7 @@ class BaseCrawler:
             delivery_fee = re.sub(r'[^\d.]', '', item["delivery_fee"])
             delivery_fee = 0 if not delivery_fee else int(Decimal(delivery_fee))
 
+            # Sum up product price with delivery fee
             actual_price = re.sub(r'[^\d.]', '', item["price"])
             actual_price = 0 if not actual_price else int(Decimal(actual_price)) + delivery_fee
 
@@ -101,16 +103,21 @@ class BeautifulSoupCrawler(BaseCrawler):
         super().__init__(file_path, mode)
 
     def data_scraping(self):
+        """
+        Use BeautifulSoup to crawl the web
+
+        :return:
+        """
         updated_products = []
 
         for existing_product_info in self.product_list["products"]:
             updated_product_info = existing_product_info
             with requests.session() as request:
-                response = request.get(existing_product_info["link"])
+                product_id = re.match(".*/dp/(.*)/ref.*", existing_product_info["link"]).group(1)
+                response = request.get(AMAZON_PRODUCT_PRICE_URL.format(product_id=product_id))
                 if response.ok:
                     soup = BeautifulSoup(response.text, "html.parser")
-                    updated_product_info = self.compare_product_info(existing_product_info,
-                                                                     self.crawl_dom(soup).values())
+                    updated_product_info = self.compare_product_info(existing_product_info, self.crawl_dom(soup).values())
 
             updated_products.append(updated_product_info)
 
@@ -125,15 +132,17 @@ class BeautifulSoupCrawler(BaseCrawler):
         :return:
         """
         product_info = {}
-        for index, (ship_from_html, sold_by_html, price_html) in enumerate(zip(soup.select('div#aod-offer-shipsFrom'),
-                                                                               soup.findAll(id='aod-offer-soldBy'),
-                                                                               soup.findAll('div', {'id': re.compile(
-                                                                                   'aod-price-\d*')}))):
+        for index, (ship_from_html, sold_by_html, price_html, delivery_fee_html) in enumerate(zip(
+                soup.select('div#aod-offer-shipsFrom'),
+                soup.findAll(id='aod-offer-soldBy'),
+                soup.findAll('div', {'id': re.compile('aod-price-\d*')}),
+                soup.findAll('div', {'id': 'mir-layout-DELIVERY_BLOCK-slot-PRIMARY_DELIVERY_MESSAGE_LARGE'}))):
             ship_from = ship_from_html.find('span', class_='a-size-small a-color-base').text.strip()
             sold_by = sold_by_html.find('a', class_='a-size-small a-link-normal').text.strip()
             price = price_html.find('span', class_='a-offscreen').text.strip()
-            # TODO retrieve delivery_fee
-            product_info[index] = {'ship_from': ship_from, 'sold_by': sold_by, 'price': price}
+            delivery_fee = delivery_fee_html.find('span').get('data-csa-c-delivery-price')
+            # print(ship_from, sold_by, price, delivery_fee)
+            product_info[index] = {'ship_from': ship_from, 'sold_by': sold_by, 'price': price, 'delivery_fee': delivery_fee}
 
         return product_info
 
@@ -144,6 +153,11 @@ class SeleniumCrawler(BaseCrawler):
         self.driver = self.create_driver_instance()
 
     def data_scraping(self):
+        """
+        Use Selenium to crawl the web
+
+        :return:
+        """
         # Temporarily array for storing product info
         updated_products = []
 
@@ -186,6 +200,7 @@ class SeleniumCrawler(BaseCrawler):
                     driver.find_elements(By.XPATH, "//div[@id='aod-offer-soldBy']/div/div/div[2]/a"),
                     driver.find_elements(By.XPATH, "//div[contains(@id, 'aod-price')]/span/span[1]"),
                     driver.find_elements(By.XPATH, "//div[contains(@id, 'mir-layout-DELIVERY_BLOCK-slot-PRIMARY_DELIVERY_MESSAGE_LARGE')]/span"))):
+                # driver.find_elements(By.XPATH, "//div[@id='aod-offer-heading']/h5")
                 product_info[index] = {
                     'ship_from': ship_from.get_attribute("innerHTML").strip(),
                     'sold_by': sold_by.get_attribute("innerHTML").strip(),
