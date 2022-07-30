@@ -23,11 +23,11 @@ python3 -V
 2. Choose either Beautiful soup or Selenium version
 
 ### Difference between Beauty soup and Selenium version
-|                 | Beautiful soup          | Selenium            |
-|-----------------|-------------------------|---------------------|
-| Execution speed | faster                  | slower              |
-| Stability       | relatively stead        | steady              |
-| Product's URL   | from browser's dev tool | Amazon product page |
+|                 | Beautiful soup        | Selenium            |
+|-----------------|-----------------------|---------------------|
+| Execution speed | faster                | slower              |
+| Stability       | stable                | relatively stable   |
+| Product's URL   | Amazon product page   | Amazon product page |
 
 
 ### Application Setup
@@ -51,14 +51,15 @@ python3 -V
    2. Type `crontab -e` and then `i`
    3. Put down execution command
    ```bash
-   # Date time can be changed
-   */1 * * * * cd {directory having source code}; source .venv/bin/activate && python main.py -e prod; deactivate;
+   # Execution period can be changed
+   # The example here means the script is executed for every 5 minutes of time
+   */5 * * * * cd {directory having source code}; source .venv/bin/activate && python main.py -e prod; deactivate;
    ```
    4. Click `Esc`, type `:wq`
    
 ### Command Arguments
 1. `-c` or `--crawl-approach`
-   - Approach being used for crawling. User can choose between `selenium` and `beautifulsoup`. `selenium` is used by default
+   - Approach being used for crawling. User can choose between `selenium` and `beautifulsoup`. `beautifulsoup` is used by default
      - selenium
      - beautifulsoup
 2. `-m` or `--mode`
@@ -66,7 +67,7 @@ python3 -V
      - 0: Item price is the lowest
      - 1: Item price is lower than expectation
 
-# Disclaimer
+## Disclaimer
 This script is for recreational purpose only. Any illegal usage including transforming the script into any means 
 for automatic ordering purpose by modifying the source code is prohibited. All rights reserved by the author of 
 this script.

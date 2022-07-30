@@ -17,7 +17,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', '--environment', type=str, default=constants.PROD, choices=[constants.PROD, constants.TEST],
                         help="Select environment")
-    parser.add_argument('-c', '--crawl-approach', type=str, default=constants.SELENIUM,
+    parser.add_argument('-c', '--crawl-approach', type=str, default=constants.BEAUTIFULSOUP,
                         choices=[constants.SELENIUM, constants.BEAUTIFULSOUP], help="Select crawling approach")
     parser.add_argument('-m', '--mode', type=int, default=0,
                         choices=[0, 1], help="Choose filtering options")

@@ -14,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import NoSuchElementException, TimeoutException
 from seleniumwire import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
-from config import AMAZON_PRODUCT_PRICE_URL
+from constants import AMAZON_PRODUCT_PRICE_URL
 
 logger = logging.getLogger(__name__)
 
@@ -47,14 +47,14 @@ class BaseCrawler:
             delivery_fee = 0 if not delivery_fee else int(Decimal(delivery_fee))
 
             # Sum up product price with delivery fee
-            actual_price = re.sub(r'[^\d.]', '', item["price"])
-            actual_price = 0 if not actual_price else int(Decimal(actual_price)) + delivery_fee
+            total_price = re.sub(r'[^\d.]', '', item["price"])
+            total_price = 0 if not total_price else int(Decimal(total_price)) + delivery_fee
 
-            if not actual_price:
+            if not total_price:
                 continue
 
             amazon = re.compile(r"^Amazon.*")
-            item.update({"id": index, "actual_price": actual_price})
+            item.update({"id": index, "actual_price": total_price})
 
             # Delivery and selling source are both Amazon
             if re.match(amazon, item["ship_from"]) and re.match(amazon, item["sold_by"]):
@@ -62,16 +62,15 @@ class BaseCrawler:
                 return info
 
             # Lowest price
-            if (self.mode == 0) and (not optimal_choice or actual_price < optimal_choice["actual_price"]):
+            if (self.mode == 0) and (not optimal_choice or total_price < optimal_choice["actual_price"]):
                 optimal_choice = item
 
             # Price lower than expectation
-            if (self.mode == 1) and (not optimal_choice and actual_price <= int(existing_info["expected_price"])):
+            if (self.mode == 1) and (not optimal_choice and total_price <= int(existing_info["expected_price"])):
                 optimal_choice = item
 
         if optimal_choice:
             return self.update_product_info(existing_info, optimal_choice)
-            # return info
 
         return existing_info
 
